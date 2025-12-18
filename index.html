@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title> My TeleText </title>
+    <title>뉴시스 -텍스트-</title>
     <style>
         /* 폰트 정의: 둥근모 */
         @font-face {
@@ -295,7 +295,7 @@
     <!-- 헤더 -->
     <header>
         <span class="header-p" id="page-display">P100</span>
-        <span class="header-title">뉴시스 [텍스트]</span>
+        <span class="header-title">뉴시스 -텍스트-</span>
         <span class="header-time" id="clock">12:00</span>
     </header>
 
@@ -357,17 +357,28 @@
     // 전국 80개 도시 이름 (기상청 XML 관측소 이름 기준)
     const CITIES = [
         // PART 1: 수도권/경기북부/강원북부
-        "서울", "인천", "수원", "파주", "동두천", "이천", "양평", "강화", "백령도", "춘천",
-        "철원", "인제", "홍천", "원주", "대관령", "강릉", "속초", "동해", "태백", "정선군",
+        {n:"서울",la:37.56,lo:126.97}, {n:"인천",la:37.45,lo:126.70}, {n:"수원",la:37.26,lo:127.02}, {n:"파주",la:37.76,lo:126.78}, {n:"동두천",la:37.90,lo:127.06},
+        {n:"이천",la:37.28,lo:127.43}, {n:"양평",la:37.49,lo:127.48}, {n:"강화",la:37.74,lo:126.49}, {n:"백령도",la:37.96,lo:124.63}, {n:"춘천",la:37.88,lo:127.72},
+        {n:"철원",la:38.14,lo:127.31}, {n:"인제",la:38.06,lo:128.17}, {n:"홍천",la:37.69,lo:127.88}, {n:"원주",la:37.34,lo:127.92}, {n:"대관령",la:37.68,lo:128.76},
+        {n:"강릉",la:37.75,lo:128.87}, {n:"속초",la:38.20,lo:128.59}, {n:"동해",la:37.52,lo:129.11}, {n:"태백",la:37.16,lo:128.98}, {n:"정선군",la:37.38,lo:128.66},
+
         // PART 2: 충청/강원남부
-        "대전", "세종", "청주", "충주", "제천", "보은", "추풍령", "천안", "서산", "보령",
-        "부여", "금산", "홍성", "영월", "울진", "상주", "문경", "영주", "봉화", "안동",
+        {n:"대전",la:36.35,lo:127.38}, {n:"세종",la:36.48,lo:127.28}, {n:"청주",la:36.64,lo:127.48}, {n:"충주",la:36.99,lo:127.92}, {n:"제천",la:37.13,lo:128.19},
+        {n:"보은",la:36.48,lo:127.71}, {n:"추풍령",la:36.21,lo:127.99}, {n:"천안",la:36.81,lo:127.11}, {n:"서산",la:36.78,lo:126.45}, {n:"보령",la:36.33,lo:126.61},
+        {n:"부여",la:36.27,lo:126.91}, {n:"금산",la:36.10,lo:127.48}, {n:"홍성",la:36.60,lo:126.66}, {n:"영월",la:37.18,lo:128.46}, {n:"울진",la:36.99,lo:129.40},
+        {n:"상주",la:36.41,lo:128.15}, {n:"문경",la:36.58,lo:128.18}, {n:"영주",la:36.80,lo:128.62}, {n:"봉화",la:36.89,lo:128.73}, {n:"안동",la:36.56,lo:128.72},
+
         // PART 3: 전라/제주
-        "광주", "목포", "여수", "순천", "광양시", "진도군", "완도", "해남", "강진군", "장흥",
-        "고흥", "전주", "군산", "정읍", "남원", "고창", "임실", "제주", "서귀포", "성산",
+        {n:"광주",la:35.15,lo:126.85}, {n:"목포",la:34.81,lo:126.39}, {n:"여수",la:34.76,lo:127.66}, {n:"순천",la:34.95,lo:127.48}, {n:"광양시",la:34.94,lo:127.69},
+        {n:"진도군",la:34.48,lo:126.26}, {n:"완도",la:34.31,lo:126.75}, {n:"해남",la:34.57,lo:126.59}, {n:"강진군",la:34.64,lo:126.76}, {n:"장흥",la:34.68,lo:126.90},
+        {n:"고흥",la:34.61,lo:127.28}, {n:"전주",la:35.82,lo:127.14}, {n:"군산",la:35.96,lo:126.71}, {n:"정읍",la:35.56,lo:126.85}, {n:"남원",la:35.41,lo:127.39},
+        {n:"고창",la:35.43,lo:126.69}, {n:"임실",la:35.61,lo:127.28}, {n:"제주",la:33.49,lo:126.53}, {n:"서귀포",la:33.25,lo:126.56}, {n:"성산",la:33.38,lo:126.88},
+
         // PART 4: 경상
-        "부산", "울산", "대구", "창원", "진주", "통영", "거제", "남해", "밀양", "산청",
-        "합천", "거창", "김해시", "포항", "경주시", "영천", "영덕", "청송군", "의성", "울릉도"
+        {n:"부산",la:35.17,lo:129.07}, {n:"울산",la:35.53,lo:129.31}, {n:"대구",la:35.87,lo:128.60}, {n:"창원",la:35.22,lo:128.68}, {n:"진주",la:35.18,lo:128.10},
+        {n:"통영",la:34.85,lo:128.43}, {n:"거제",la:34.88,lo:128.62}, {n:"남해",la:34.83,lo:127.89}, {n:"밀양",la:35.50,lo:128.74}, {n:"산청",la:35.41,lo:127.87},
+        {n:"합천",la:35.56,lo:128.16}, {n:"거창",la:35.68,lo:127.90}, {n:"김해시",la:35.22,lo:128.88}, {n:"포항",la:36.01,lo:129.37}, {n:"경주시",la:35.85,lo:129.22},
+        {n:"영천",la:35.97,lo:128.93}, {n:"영덕",la:36.41,lo:129.36}, {n:"청송군",la:36.43,lo:129.05}, {n:"의성",la:36.35,lo:128.69}, {n:"울릉도",la:37.48,lo:130.90}
     ];
 
     // DOM
@@ -506,6 +517,47 @@
         updateFastext("목차", "뉴스", "날씨", "내위치");
     }
 
+    // --- 공통 XML 파싱 함수 (기상청) ---
+    async function getKmaWeatherMap() {
+        const url = "https://www.kma.go.kr/XML/weather/sfc_web_map.xml";
+        let xmlText = null;
+        
+        for (const proxy of PROXIES) {
+            try {
+                const res = await fetch(proxy + encodeURIComponent(url));
+                if (res.ok) {
+                    xmlText = await res.text();
+                    break;
+                }
+            } catch (e) {
+                console.warn(`Proxy ${proxy} failed`);
+            }
+        }
+
+        if (!xmlText) throw new Error("XML Load Failed");
+
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(xmlText, "text/xml");
+        
+        const year = xml.querySelector("weather").getAttribute("year");
+        const month = xml.querySelector("weather").getAttribute("month");
+        const day = xml.querySelector("weather").getAttribute("day");
+        const hour = xml.querySelector("weather").getAttribute("hour");
+        const timeStr = `${year}.${month}.${day} ${hour}:00`;
+
+        const locals = xml.querySelectorAll("local");
+        const kmaMap = {};
+        
+        locals.forEach(node => {
+            kmaMap[node.textContent] = {
+                temp: node.getAttribute("ta"),
+                sky: node.getAttribute("desc")
+            };
+        });
+        
+        return { map: kmaMap, time: timeStr };
+    }
+
     // --- P101~108: 뉴스 (XML 직접 파싱) ---
     async function fetchNews(page) {
         const cat = NEWS_CATS[page];
@@ -553,8 +605,8 @@
     <div class="ascii-logo" style="margin-bottom: 5px;">${NEWSIS_LOGO}</div>
             `;
 
-            // 14개까지 표시
-            currentNewsItems.slice(0, 14).forEach((item, idx) => {
+            // 50개까지 표시
+            currentNewsItems.slice(0, 50).forEach((item, idx) => {
                 html += `
     <div class="tele-item" onclick="showDetail(${idx})">
         <span class="ti-id">${idx+1}</span>
@@ -597,68 +649,32 @@
 
     // --- P200: 전국 날씨 (KMA XML) ---
     async function fetchNationWeather() {
-        const url = "https://www.kma.go.kr/XML/weather/sfc_web_map.xml";
-        
-        let text = null;
-        for (const proxy of PROXIES) {
-            try {
-                const res = await fetch(proxy + encodeURIComponent(url));
-                if (res.ok) {
-                    text = await res.text();
-                    break;
-                }
-            } catch (e) {
-                console.warn(`Proxy ${proxy} failed`);
-            }
-        }
-
-        if (!text) {
-            contentDiv.innerHTML = '<div class="c-r bg-t" style="margin-top:20px; text-align:center;">기상청 데이터 수신 실패</div>';
-            return;
-        }
-
         try {
-            const parser = new DOMParser();
-            const xml = parser.parseFromString(text, "text/xml");
-            
-            const year = xml.querySelector("weather").getAttribute("year");
-            const month = xml.querySelector("weather").getAttribute("month");
-            const day = xml.querySelector("weather").getAttribute("day");
-            const hour = xml.querySelector("weather").getAttribute("hour");
-            const timeStr = `${year}.${month}.${day} ${hour}:00`;
-
-            const locals = xml.querySelectorAll("local");
-            const kmaMap = {};
-            locals.forEach(node => {
-                kmaMap[node.textContent] = {
-                    temp: node.getAttribute("ta"),
-                    sky: node.getAttribute("desc")
-                };
-            });
+            const { map, time } = await getKmaWeatherMap();
 
             weatherData = [];
-            CITIES.forEach(cityName => {
-                const data = kmaMap[cityName];
+            CITIES.forEach(city => {
+                const data = map[city.n]; // map의 키는 도시 이름(string)
                 if (data) {
-                    weatherData.push({ name: cityName, temp: data.temp, sky: data.sky });
+                    weatherData.push({ name: city.n, temp: data.temp, sky: data.sky });
                 } else {
-                    weatherData.push({ name: cityName, temp: "--", sky: "정보없음" });
+                    weatherData.push({ name: city.n, temp: "--", sky: "정보없음" });
                 }
             });
 
             weatherPageIndex = 0;
-            renderWeatherPage(timeStr);
+            renderWeatherPage(time);
 
             if (weatherTimer) clearInterval(weatherTimer);
             weatherTimer = setInterval(() => {
                 weatherPageIndex++;
                 if (weatherPageIndex >= 4) weatherPageIndex = 0;
-                renderWeatherPage(timeStr);
+                renderWeatherPage(time);
             }, WEATHER_INTERVAL);
 
         } catch(e) {
             console.error(e);
-            contentDiv.innerHTML = '<div class="c-r bg-t">날씨 데이터 오류</div>';
+            contentDiv.innerHTML = '<div class="c-r bg-t">기상청 데이터 수신 실패</div>';
         }
     }
 
@@ -726,29 +742,44 @@
         navigator.geolocation.getCurrentPosition(async (pos) => {
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
             
             try {
-                const res = await fetch(url);
-                const data = await res.json();
-                const cur = data.current_weather;
-                const wCode = getWeatherText(cur.weathercode);
+                const { map, time } = await getKmaWeatherMap();
+                
+                // 가장 가까운 도시 찾기 (CITIES 배열 활용)
+                let nearest = null;
+                let minDist = Infinity;
+                
+                CITIES.forEach(city => {
+                    // 유클리드 거리 근사치 계산 (정밀한 Haversine이 아니어도 가까운 도시 찾기엔 충분)
+                    const dist = Math.pow(city.la - lat, 2) + Math.pow(city.lo - lon, 2);
+                    if(dist < minDist) {
+                        minDist = dist;
+                        nearest = city;
+                    }
+                });
+                
+                if(!nearest) throw new Error("Nearest city not found");
+                
+                // 해당 도시의 날씨 데이터 조회
+                const data = map[nearest.n] || { temp: "--", sky: "정보없음" };
                 
                 let html = `
     <div style="text-align:center; margin-top: 30px;">
-        <span class="c-m bg-t double-height">내 위치 날씨 정보</span>
+        <span class="c-m bg-t double-height">내 위치 (근접 관측소)</span>
     </div>
 
     <div style="border: 4px solid white; padding:30px; text-align:center; margin-top: 20px; width: 80%; max-width:400px; margin-left:auto; margin-right:auto;">
-        <div class="c-g">위도 ${lat.toFixed(2)} / 경도 ${lon.toFixed(2)}</div>
+        <div class="c-g">관측소: ${nearest.n}</div>
+        <div style="font-size:0.8rem; color:#aaa; margin-bottom:10px;">(위도 ${lat.toFixed(2)} / 경도 ${lon.toFixed(2)})</div>
         <br>
         <div style="display:flex; justify-content:center; margin-bottom:10px;">
-            <div style="transform:scale(2.5);">${getWeatherIcon(wCode)}</div>
+            <div style="transform:scale(2.5);">${getWeatherIcon(data.sky)}</div>
         </div>
-        <div class="c-w" style="font-size:4rem; font-weight:bold; margin-top:10px; text-shadow: 4px 4px #000;">${cur.temperature}°C</div>
-        <div class="c-y" style="font-size:1.5rem; margin-top:10px;">${wCode}</div>
+        <div class="c-w" style="font-size:4rem; font-weight:bold; margin-top:10px; text-shadow: 4px 4px #000;">${data.temp}°C</div>
+        <div class="c-y" style="font-size:1.5rem; margin-top:10px;">${data.sky}</div>
         <br>
-        <div class="c-c" style="font-size:1.2rem;">풍속: ${cur.windspeed} km/h</div>
+        <div class="c-c" style="font-size:1.0rem;">기준: ${time}</div>
     </div>
                 `;
                 contentDiv.innerHTML = html;
@@ -756,7 +787,8 @@
                 fastextBar[3].onclick = () => loadPage(201);
 
             } catch(e) {
-                contentDiv.innerHTML = '<div class="c-r bg-t" style="margin-top:20px; text-align:center;">날씨 API 오류</div>';
+                console.error(e);
+                contentDiv.innerHTML = '<div class="c-r bg-t" style="margin-top:20px; text-align:center;">날씨 데이터 오류</div>';
             }
         }, () => {
             contentDiv.innerHTML = '<div class="c-r bg-t" style="margin-top:20px; text-align:center;">GPS 권한이 필요합니다.</div>';
