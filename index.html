@@ -3,570 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>뉴시스 -텍스트-</title>
+    <title>NewsText</title>
     <style>
-        /* 폰트 정의: 둥근모 */
+        /* 1. 폰트: 둥근모 */
         @font-face {
-            font-family: 'RoundedFixedsys';
+            font-family: 'DungGeunMo';
             src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.woff') format('woff');
             font-weight: normal;
             font-display: swap;
         }
 
-        /* 색상 팔레트 */
+        /* 2. 테마 변수 */
         :root {
-            --bg-blue:    #000084;
-            --tt-white:   #FFFFFF;
-            --tt-yellow:  #FFFF00;
-            --tt-cyan:    #00FFFF;
-            --tt-green:   #00FF00;
-            --tt-magenta: #FF00FF;
-            --tt-red:     #FF0000;
-            --tt-black:   #000000;
-            --font-main: 'RoundedFixedsys', monospace;
+            --bg-color: #0000AA;    /* 터미널 블루 */
+            --text-main: #A8A8A8;   /* 기본 회색 */
+            --text-high: #FFFFFF;   /* 강조 흰색 */
+            --text-yellow: #FFFF55; /* 노란색 */
+            --text-cyan: #55FFFF;   /* 하늘색 */
+            --text-green: #55FF55;  /* 초록색 */
+            --text-red: #FF5555;    /* 빨간색 */
+            --dim-black: #000000;
         }
 
-        /* 기본 레이아웃 초기화 */
+        /* 기본 설정 - 전체화면 */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--bg-blue);
-            font-family: var(--font-main);
-            color: var(--tt-white);
-            overflow: hidden; /* 전체 스크롤 방지 (앱 느낌) */
+            background-color: var(--bg-color); /* 전체 배경 파란색 */
+            font-family: 'DungGeunMo', monospace;
+            overflow: hidden;
+            color: var(--text-main);
         }
 
-        /* 전체 컨테이너 */
-        #screen-area {
-            display: flex;
-            flex-direction: column;
+        /* 모니터 컨테이너 */
+        #monitor {
             width: 100%;
             height: 100%;
-            max-width: 1024px; /* 태블릿 가로 최대 폭 */
-            margin: 0 auto;    /* 중앙 정렬 */
-            padding: 20px;
-            box-sizing: border-box;
-            background-color: var(--bg-blue);
-        }
-
-        /* 1. 헤더 */
-        header {
-            flex-shrink: 0; /* 크기 고정 */
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--tt-white);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-            font-size: clamp(1.2rem, 4vw, 1.8rem); /* 반응형 폰트 크기 */
+            flex-direction: column;
+            background-color: var(--bg-color);
         }
-        .header-p { color: var(--tt-white); font-weight: bold; }
-        .header-title { color: var(--tt-yellow); font-weight: bold; letter-spacing: 2px; text-shadow: 2px 2px #000; }
-        .header-time { color: var(--tt-green); background-color: #000; padding: 0 5px; }
 
-        /* 2. 메인 콘텐츠 영역 (스크롤 가능) */
-        #content {
-            flex-grow: 1; /* 남은 공간 모두 차지 */
-            overflow-y: auto; /* 내부 스크롤 허용 */
-            overflow-x: hidden;
+        /* 실제 화면 영역 */
+        #screen {
+            flex: 1;
+            width: 100%;
+            height: 100%;
             position: relative;
             display: flex;
             flex-direction: column;
-            /* 스크롤바 커스터마이징 */
-            scrollbar-width: thin;
-            scrollbar-color: var(--tt-white) var(--bg-blue);
-        }
-        #content::-webkit-scrollbar {
-            width: 6px;
-        }
-        #content::-webkit-scrollbar-thumb {
-            background-color: var(--tt-white);
-            border-radius: 3px;
+            overflow: hidden;
+            border: none;
+            box-shadow: none;
+            max-width: none;
+            max-height: none;
         }
 
-        /* 텍스트 스타일 */
-        .double-height {
-            display: inline-block;
+        /* 상단 상태바 */
+        #status-bar {
+            background-color: var(--text-main);
+            color: var(--bg-color);
+            padding: 4px 10px;
             font-weight: bold;
-            font-size: 1.2em; /* 약간 키움 */
-            transform: scaleY(1.3);
-            transform-origin: left center;
-            margin-bottom: 5px;
-        }
-
-        /* 로고 스타일 (반응형) */
-        .ascii-logo {
-            font-family: 'Courier New', Courier, monospace, 'RoundedFixedsys';
-            white-space: pre;
-            line-height: 1.0;
-            color: var(--tt-white);
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-align: center;
-            width: 100%;
-            overflow: hidden; /* 넘치는 부분 숨김 */
-            
-            /* 화면 크기에 맞춰 폰트 사이즈 자동 조절 */
-            font-size: clamp(6px, 2.5vw, 16px); 
             display: flex;
-            justify-content: center;
-        }
-
-        /* 인덱스 그리드 (목차) */
-        .index-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 기본 2열 */
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        /* 리스트 아이템 */
-        .tele-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0; /* 터치 영역 확보 */
-            cursor: pointer;
-            border-bottom: 1px dashed rgba(255,255,255,0.3);
-            font-size: clamp(1rem, 3.5vw, 1.4rem); /* 반응형 폰트 */
-        }
-        .tele-item:active, .tele-item:hover {
-            background-color: var(--tt-white);
-        }
-        .tele-item:active *, .tele-item:hover * {
-            color: var(--bg-blue) !important;
-        }
-        
-        .ti-id { 
-            color: var(--tt-cyan); 
-            width: 3.5em; 
-            font-weight: bold; 
-            flex-shrink: 0; 
-        }
-        .ti-text { 
-            color: var(--tt-white); 
-            flex: 1; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-        }
-
-        /* 날씨 그리드 (반응형) */
-        .weather-container {
-            width: 100%;
-            margin-top: 10px;
-            padding-bottom: 10px;
-        }
-        
-        .weather-grid {
-            display: grid;
-            gap: 2px;
-            border: 2px solid var(--tt-white);
-            background-color: var(--tt-white);
-            /* 기본(PC/태블릿 가로): 5열 4행 */
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-            min-height: 400px;
-        }
-        
-        .w-cell {
-            background-color: var(--bg-blue);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 5px 0;
-            aspect-ratio: 1 / 0.8; /* 셀 비율 유지 */
-        }
-        
-        .w-loc { color: var(--tt-yellow); font-size: clamp(0.9rem, 2.5vw, 1.2rem); margin-bottom: 2px; }
-        .w-temp { color: var(--tt-white); font-weight: bold; font-size: clamp(1.1rem, 3vw, 1.5rem); }
-        
-        .w-icon {
-            width: clamp(24px, 6vw, 40px);
-            height: clamp(24px, 6vw, 40px);
-            shape-rendering: crispEdges;
-            margin: 2px 0;
-        }
-
-        /* 3. 하단 Fastext 버튼 (네비게이션) */
-        #fastext-bar {
+            justify-content: space-between;
+            font-size: 16px;
             flex-shrink: 0;
-            height: 60px; /* 터치하기 좋게 높이 증가 */
-            display: flex;
-            gap: 8px;
-            padding-top: 10px;
-            border-top: 2px solid var(--tt-white);
-            font-size: clamp(0.9rem, 3vw, 1.2rem);
-            font-weight: bold;
         }
-        .fast-link {
+
+        /* 메인 컨텐츠 영역 */
+        #main-view {
             flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            scrollbar-width: none;
+        }
+        #main-view::-webkit-scrollbar { display: none; }
+
+        /* 하단 명령 입력줄 */
+        #command-line {
+            background-color: var(--bg-color);
+            border-top: 2px solid var(--bg-color); 
+            padding: 10px 15px;
+            font-size: 18px;
+            color: var(--text-yellow);
             display: flex;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            cursor: pointer;
-            color: #000;
-            border-radius: 4px;
-            box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
-            transition: transform 0.1s;
-            user-select: none; /* 텍스트 선택 방지 */
+            min-height: 50px;
+            flex-shrink: 0;
         }
-        .fast-link:active { transform: translateY(2px); box-shadow: none; }
         
-        .fl-red { background-color: var(--tt-red); color: white; }
-        .fl-green { background-color: var(--tt-green); }
-        .fl-yellow { background-color: var(--tt-yellow); }
-        .fl-cyan { background-color: var(--tt-cyan); }
-
-        /* 애니메이션 */
-        .slide-animate { animation: slideIn 0.4s ease-out forwards; }
-        @keyframes slideIn {
-            from { transform: translateX(50%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        .blink { animation: blinker 1s step-end infinite; }
-        @keyframes blinker { 50% { opacity: 0; } }
-
-        /* 입력 오버레이 */
-        #input-overlay {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--tt-yellow);
-            color: #000;
-            font-size: 3rem;
-            padding: 20px 40px;
-            font-weight: bold;
-            display: none;
-            z-index: 100;
-            box-shadow: 10px 10px 0 rgba(0,0,0,0.5);
-            border: 4px solid #fff;
+        #cmd-input {
+            background: transparent;
+            border: none;
+            color: var(--text-high);
+            font-family: 'DungGeunMo', monospace;
+            font-size: 18px;
+            outline: none;
+            flex: 1;
+            margin-left: 10px;
+            text-transform: uppercase;
         }
 
-        /* 유틸리티 */
-        .c-w { color: var(--tt-white); }
-        .c-y { color: var(--tt-yellow); }
-        .c-c { color: var(--tt-cyan); }
-        .c-g { color: var(--tt-green); }
-        .c-m { color: var(--tt-magenta); }
-        .c-r { color: var(--tt-red); }
-        .bg-t { background-color: #000; padding: 2px 6px; }
+        /* 깜빡이는 커서 */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background-color: var(--text-high);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
 
-        /* =========================================
-           [모바일 전용 스타일] (768px 이하)
-           ========================================= */
+        /* 유틸리티 클래스 */
+        .c-w { color: var(--text-high); }
+        .c-y { color: var(--text-yellow); }
+        .c-c { color: var(--text-cyan); }
+        .c-g { color: var(--text-green); }
+        .c-r { color: var(--text-red); }
+        
+        /* 링크/버튼 스타일 */
+        .t-link {
+            cursor: pointer;
+            color: var(--text-high);
+            text-decoration: none;
+            padding: 2px 0;
+            display: block; 
+        }
+        .t-link:hover, .t-link:active {
+            color: var(--text-yellow);
+            background-color: #000080;
+        }
+
+        /* 반응형 */
         @media (max-width: 768px) {
-            #screen-area { padding: 10px; }
-            
-            /* 목차 그리드 1열로 변경 */
-            .index-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            /* 날씨 그리드 3열로 변경 (모바일에서 5열은 너무 좁음) */
-            .weather-grid {
-                grid-template-columns: repeat(3, 1fr);
-                /* 20개를 3열로 표시하면 7행이 필요함 */
-                grid-template-rows: repeat(7, 1fr); 
-                height: auto; /* 내용에 맞춰 늘어남 */
-            }
-            
-            /* 날씨 셀 크기 확보 */
-            .w-cell {
-                min-height: 80px; 
-            }
-
-            /* 더블 하이트 효과 축소 */
-            .double-height { transform: none; font-size: 1.3em; }
-            
-            /* 스크롤바 숨김 (모바일은 터치 스크롤 하므로) */
-            #content::-webkit-scrollbar { width: 0; }
+            #main-view { padding: 10px; font-size: 16px; }
+            #command-line { font-size: 16px; padding: 8px 10px; }
+            #cmd-input { font-size: 16px; }
+            #status-bar { font-size: 12px; }
+            .t-link { padding: 8px 0; border-bottom: 1px dashed #000080; }
         }
     </style>
 </head>
 <body>
 
-<div id="screen-area">
-    <!-- 헤더 -->
-    <header>
-        <span class="header-p" id="page-display">P100</span>
-        <span class="header-title">뉴시스 -텍스트-</span>
-        <span class="header-time" id="clock">12:00</span>
-    </header>
+<div id="monitor">
+    <div id="screen">
+        <!-- 상단 상태바 -->
+        <div id="status-bar">
+            <span>/N / e / w / s/ Text</span>
+            <span id="clock">00:00:00</span>
+            <span>Online</span>
+        </div>
 
-    <!-- 메인 콘텐츠 -->
-    <div id="content">
-        <!-- 내용이 여기에 동적으로 로드됩니다 -->
-    </div>
+        <!-- 메인 뷰 -->
+        <div id="main-view">
+            <!-- 콘텐츠 로드 -->
+        </div>
 
-    <!-- 하단 네비게이션 -->
-    <div id="fastext-bar">
-        <div class="fast-link fl-red" onclick="handleFastext('red')">100 목차</div>
-        <div class="fast-link fl-green" onclick="handleFastext('green')">101 뉴스</div>
-        <div class="fast-link fl-yellow" onclick="handleFastext('yellow')">200 날씨</div>
-        <div class="fast-link fl-cyan" onclick="handleFastext('cyan')">201 내위치</div>
+        <!-- 하단 명령줄 -->
+        <div id="command-line">
+            <span id="prompt-text">선택(번호) ></span>
+            <input type="text" id="cmd-input" maxlength="10" autocomplete="off" inputmode="numeric">
+            <span class="cursor"></span>
+        </div>
     </div>
 </div>
-
-<!-- 페이지 번호 입력 표시 (키보드용) -->
-<div id="input-overlay"></div>
 
 <script>
     // --- 설정 및 상태 ---
     let currentPage = 100;
-    let inputBuffer = "";
-    let currentNewsItems = [];
+    let inputBlocked = false;
     
-    // 날씨 관련
-    let weatherTimer = null;
-    let weatherData = [];
-    let weatherPageIndex = 0;
-    const WEATHER_INTERVAL = 20000; // 20초
-
-    const RSS2JSON = "https://api.rss2json.com/v1/api.json?rss_url=";
+    // 프록시 설정
     const PROXIES = [
         "https://corsproxy.io/?",
         "https://api.allorigins.win/raw?url="
     ];
 
-    const NEWSIS_LOGO = `
-⠀⡯⣺⠅⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣔⢖⢦⣢⠀⠀⠀⢜⡗⡇⠀⠀⠀⠀⡠⣔⡖⣖⢴⡀⠀⠀⠀⠀⠀⠐⡕⡕⡱⠨⡂⢂⠀⠀⠀
-⠀⣯⡺⡅⣀⢀⡀⣀⢀⡀⣀⠀⠀⠀⡸⡼⡙⢵⢳⢅⠀⠀⢺⡪⡗⠀⠀⠀⡰⣝⢞⠌⠑⡯⣺⢄⠀⠀⠀⠀⢈⢎⢎⢜⢌⠢⡁⡂⡐⢀
-⠀⠱⠝⢮⠳⡝⢮⠳⡝⠮⡳⠀⠀⠀⡵⣫⠃⢸⡹⣕⠀⠀⠵⣝⡎⠀⠀⢠⢯⡺⠅⠀⠀⠸⣕⢗⡄⠀⠀⠀⠐⡕⡕⢕⠜⡌⡢⡂⡪⢐
-⡤⣠⢄⡤⣠⢄⡤⣠⢄⡤⣠⢄⠀⢨⡺⣕⠁⠀⣝⢮⠄⠀⡹⣪⢎⠀⠀⠋⠓⠉⠀⠀⠀⠀⠊⠋⠚⠀⠀⠀⠨⡪⡪⡪⡪⡪⢢⠣⡊⡆
-⠝⠎⢷⢝⡮⠳⠹⢪⢗⡝⠎⠏⠀⢜⡞⡖⠀⠀⢱⡫⣇⠀⡪⣗⢇⠀⡤⡤⡤⡤⡤⡤⡤⡤⡤⡤⡤⡤⠀⠀⠨⡪⡪⡪⡪⡪⡪⡪⡪
-⠀⠀⡳⣝⡆⠀⠀⢪⢯⢎⠀⠀⠀⠓⠙⠂⠀⠀⠘⠚⠊⠀⠜⠮⠇⠀⠙⠊⠋⠋⠚⠙⠙⠊⠋⠋⠚⠙⠀⠀⠈⠊⠊⠊⠊⠊⠊⠊⠊⠊
-`;
-
-    // 109번 태블릿/IT 추가됨
+    // 뉴스 카테고리 (수정됨)
     const NEWS_CATS = {
-        101: { t: "주요뉴스", u: "https://www.newsis.com/RSS/sokbo.xml" },
-        102: { t: "정치",  u: "https://www.newsis.com/RSS/politics.xml" },
-        103: { t: "경제",   u: "https://www.newsis.com/RSS/economy.xml" },
-        104: { t: "사회",   u: "https://www.newsis.com/RSS/society.xml" },
-        105: { t: "국제",     u: "https://www.newsis.com/RSS/international.xml" },
-        106: { t: "문화",   u: "https://www.newsis.com/RSS/culture.xml" },
-        107: { t: "스포츠",    u: "https://www.newsis.com/RSS/sports.xml" },
-        108: { t: "연예", u: "https://www.newsis.com/RSS/entertain.xml" },
-        109: { t: "태블릿/IT", u: "https://www.newsis.com/RSS/industry.xml" } 
+        // [뉴시스] 10번대 (유지)
+        11: { t: "뉴시스 속보", u: "https://www.newsis.com/RSS/sokbo.xml" },
+        12: { t: "뉴시스 정치", u: "https://www.newsis.com/RSS/politics.xml" },
+        13: { t: "뉴시스 경제", u: "https://www.newsis.com/RSS/economy.xml" },
+        14: { t: "뉴시스 금융", u: "https://www.newsis.com/RSS/bank.xml" },
+        15: { t: "뉴시스 산업", u: "https://www.newsis.com/RSS/industry.xml" },
+        16: { t: "뉴시스 사회", u: "https://www.newsis.com/RSS/society.xml" },
+        17: { t: "뉴시스 국제", u: "https://www.newsis.com/RSS/international.xml" },
+        18: { t: "뉴시스 문화", u: "https://www.newsis.com/RSS/culture.xml" },
+        19: { t: "뉴시스 스포츠", u: "https://www.newsis.com/RSS/sports.xml" },
+        
+        // [연합뉴스] 20번대 (30번대에서 이동)
+        21: { t: "연합 전체기사", u: "https://www.yna.co.kr/rss/news.xml" },
+        22: { t: "연합 정치", u: "https://www.yna.co.kr/rss/politics.xml" },
+        23: { t: "연합 경제", u: "https://www.yna.co.kr/rss/economy.xml" },
+        24: { t: "연합 산업", u: "https://www.yna.co.kr/rss/industry.xml" },
+        25: { t: "연합 사회", u: "https://www.yna.co.kr/rss/society.xml" },
+        26: { t: "연합 전국", u: "https://www.yna.co.kr/rss/local.xml" },
+        27: { t: "연합 국제", u: "https://www.yna.co.kr/rss/international.xml" },
+        28: { t: "연합 문화", u: "https://www.yna.co.kr/rss/culture.xml" },
+        29: { t: "연합 스포츠", u: "https://www.yna.co.kr/rss/sports.xml" }
+        
     };
 
-    // 전국 80개 도시 이름 (기상청 XML 관측소 이름 기준)
-    const CITIES = [
-        // PART 1: 수도권/경기북부/강원북부
-        {n:"서울",la:37.56,lo:126.97}, {n:"인천",la:37.45,lo:126.70}, {n:"수원",la:37.26,lo:127.02}, {n:"파주",la:37.76,lo:126.78}, {n:"동두천",la:37.90,lo:127.06},
-        {n:"이천",la:37.28,lo:127.43}, {n:"양평",la:37.49,lo:127.48}, {n:"강화",la:37.74,lo:126.49}, {n:"백령도",la:37.96,lo:124.63}, {n:"춘천",la:37.88,lo:127.72},
-        {n:"철원",la:38.14,lo:127.31}, {n:"인제",la:38.06,lo:128.17}, {n:"홍천",la:37.69,lo:127.88}, {n:"원주",la:37.34,lo:127.92}, {n:"대관령",la:37.68,lo:128.76},
-        {n:"강릉",la:37.75,lo:128.87}, {n:"속초",la:38.20,lo:128.59}, {n:"동해",la:37.52,lo:129.11}, {n:"태백",la:37.16,lo:128.98}, {n:"정선군",la:37.38,lo:128.66},
+    // 기상청 관측소 지역별 분류 (30번대로 이동 및 세분화)
+    const REGION_CITIES = {
+        // 수도권
+        32: { name: "서울/경기/인천", cities: ["서울", "인천", "수원", "파주", "동두천", "이천", "백령도", "강화", "양평"] },
+        // 강원도
+        33: { name: "강원도", cities: ["춘천", "강릉", "속초", "철원", "대관령", "원주", "영월", "태백", "인제", "홍천", "동해", "정선군"] },
+        // 충청권
+        34: { name: "충청/대전/세종", cities: ["대전", "세종", "청주", "충주", "추풍령", "서산", "천안", "보령", "부여", "금산", "홍성", "제천", "보은"] },
+        // 전라권
+        35: { name: "전라/광주", cities: ["광주", "전주", "목포", "여수", "군산", "완도", "고창", "순천", "진도(첨찰산)", "흑산도", "정읍", "남원", "임실", "장흥", "해남", "고흥"] },
+        // 경상권
+        36: { name: "경상/대구/부산/울산", cities: ["부산", "대구", "울산", "창원", "안동", "포항", "상주", "진주", "거창", "통영", "울릉도", "김해시", "경주시", "영천", "영덕", "의성", "봉화", "영주", "문경", "합천", "밀양", "산청", "남해", "거제", "청송군"] },
+        // 제주도
+        37: { name: "제주도", cities: ["제주", "서귀포", "성산", "고산"] }
+    };
 
-        // PART 2: 충청/강원남부
-        {n:"대전",la:36.35,lo:127.38}, {n:"세종",la:36.48,lo:127.28}, {n:"청주",la:36.64,lo:127.48}, {n:"충주",la:36.99,lo:127.92}, {n:"제천",la:37.13,lo:128.19},
-        {n:"보은",la:36.48,lo:127.71}, {n:"추풍령",la:36.21,lo:127.99}, {n:"천안",la:36.81,lo:127.11}, {n:"서산",la:36.78,lo:126.45}, {n:"보령",la:36.33,lo:126.61},
-        {n:"부여",la:36.27,lo:126.91}, {n:"금산",la:36.10,lo:127.48}, {n:"홍성",la:36.60,lo:126.66}, {n:"영월",la:37.18,lo:128.46}, {n:"울진",la:36.99,lo:129.40},
-        {n:"상주",la:36.41,lo:128.15}, {n:"문경",la:36.58,lo:128.18}, {n:"영주",la:36.80,lo:128.62}, {n:"봉화",la:36.89,lo:128.73}, {n:"안동",la:36.56,lo:128.72},
-
-        // PART 3: 전라/제주
-        {n:"광주",la:35.15,lo:126.85}, {n:"목포",la:34.81,lo:126.39}, {n:"여수",la:34.76,lo:127.66}, {n:"순천",la:34.95,lo:127.48}, {n:"광양시",la:34.94,lo:127.69},
-        {n:"진도군",la:34.48,lo:126.26}, {n:"완도",la:34.31,lo:126.75}, {n:"해남",la:34.57,lo:126.59}, {n:"강진군",la:34.64,lo:126.76}, {n:"장흥",la:34.68,lo:126.90},
-        {n:"고흥",la:34.61,lo:127.28}, {n:"전주",la:35.82,lo:127.14}, {n:"군산",la:35.96,lo:126.71}, {n:"정읍",la:35.56,lo:126.85}, {n:"남원",la:35.41,lo:127.39},
-        {n:"고창",la:35.43,lo:126.69}, {n:"임실",la:35.61,lo:127.28}, {n:"제주",la:33.49,lo:126.53}, {n:"서귀포",la:33.25,lo:126.56}, {n:"성산",la:33.38,lo:126.88},
-
-        // PART 4: 경상
-        {n:"부산",la:35.17,lo:129.07}, {n:"울산",la:35.53,lo:129.31}, {n:"대구",la:35.87,lo:128.60}, {n:"창원",la:35.22,lo:128.68}, {n:"진주",la:35.18,lo:128.10},
-        {n:"통영",la:34.85,lo:128.43}, {n:"거제",la:34.88,lo:128.62}, {n:"남해",la:34.83,lo:127.89}, {n:"밀양",la:35.50,lo:128.74}, {n:"산청",la:35.41,lo:127.87},
-        {n:"합천",la:35.56,lo:128.16}, {n:"거창",la:35.68,lo:127.90}, {n:"김해시",la:35.22,lo:128.88}, {n:"포항",la:36.01,lo:129.37}, {n:"경주시",la:35.85,lo:129.22},
-        {n:"영천",la:35.97,lo:128.93}, {n:"영덕",la:36.41,lo:129.36}, {n:"청송군",la:36.43,lo:129.05}, {n:"의성",la:36.35,lo:128.69}, {n:"울릉도",la:37.48,lo:130.90}
-    ];
-
-    // DOM
-    const contentDiv = document.getElementById('content');
-    const pageDisplay = document.getElementById('page-display');
+    // DOM 요소
+    const mainView = document.getElementById('main-view');
+    const cmdInput = document.getElementById('cmd-input');
     const clockSpan = document.getElementById('clock');
-    const inputOverlay = document.getElementById('input-overlay');
-    const fastextBar = document.querySelectorAll('.fast-link');
+    const promptText = document.getElementById('prompt-text');
 
     // --- 시계 ---
     function updateClock() {
         const now = new Date();
-        const m = String(now.getMonth()+1).padStart(2,'0');
-        const d = String(now.getDate()).padStart(2,'0');
-        const t = now.toLocaleTimeString('ko-KR', {hour12:false, hour:'2-digit', minute:'2-digit'});
-        clockSpan.innerText = `${m}/${d} ${t}`;
+        clockSpan.innerText = now.toLocaleTimeString('ko-KR', { hour12: false });
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    function toKSTTime(dateObjOrStr) {
-        let date;
-        if (dateObjOrStr instanceof Date) date = dateObjOrStr;
-        else date = new Date(dateObjOrStr);
-        if (isNaN(date.getTime())) return "00:00";
-        return date.toTimeString().split(' ')[0].substring(0,5);
+    // --- 초기화 ---
+    function init() {
+        loadPage(100);
+        cmdInput.focus();
     }
-
-    // --- 픽셀 아이콘 (SVG) ---
-    function getWeatherIcon(sky) {
-        const s = sky.trim();
-        if (s.includes("맑음")) {
-            return `<svg viewBox="0 0 10 10" class="w-icon"><rect x="3" y="3" width="4" height="4" fill="yellow"/><rect x="1" y="4" width="8" height="2" fill="yellow"/><rect x="4" y="1" width="2" height="8" fill="yellow"/></svg>`;
-        } else if (s.includes("구름") || s.includes("흐림")) {
-            return `<svg viewBox="0 0 10 10" class="w-icon"><rect x="2" y="4" width="6" height="4" fill="cyan"/><rect x="3" y="3" width="3" height="2" fill="cyan"/></svg>`;
-        } else if (s.includes("비")) {
-            return `<svg viewBox="0 0 10 10" class="w-icon"><rect x="2" y="3" width="6" height="3" fill="gray"/><rect x="3" y="7" width="1" height="2" fill="cyan"/><rect x="6" y="7" width="1" height="2" fill="cyan"/></svg>`;
-        } else if (s.includes("눈")) {
-            return `<svg viewBox="0 0 10 10" class="w-icon"><rect x="4" y="1" width="2" height="8" fill="white"/><rect x="1" y="4" width="8" height="2" fill="white"/><rect x="2" y="2" width="1" height="1" fill="white"/><rect x="7" y="2" width="1" height="1" fill="white"/><rect x="2" y="7" width="1" height="1" fill="white"/><rect x="7" y="7" width="1" height="1" fill="white"/></svg>`;
-        }
-        return `<svg viewBox="0 0 10 10" class="w-icon"><rect x="3" y="3" width="4" height="4" fill="#555"/></svg>`;
-    }
-
-    // --- 입력 시스템 ---
-    function inputDigit(d) {
-        if(inputBuffer.length < 3) {
-            inputBuffer += d;
-            inputOverlay.style.display = "block";
-            inputOverlay.innerText = inputBuffer;
-            if(inputBuffer.length === 3) {
-                const page = parseInt(inputBuffer);
-                setTimeout(() => {
-                    loadPage(page);
-                    inputBuffer = "";
-                    inputOverlay.style.display = "none";
-                }, 500);
-            }
-        }
-    }
-
+    
     // --- 페이지 로더 ---
-    function loadPage(page) {
-        if (weatherTimer) {
-            clearInterval(weatherTimer);
-            weatherTimer = null;
-        }
-
-        currentPage = page;
-        pageDisplay.innerText = "P" + page;
-        inputBuffer = "";
-        inputOverlay.style.display = "none";
+    function loadPage(pageNo) {
+        if(inputBlocked) return;
         
-        // 로딩 화면
-        contentDiv.innerHTML = `
-            <div style="flex:1; display:flex; align-items:center; justify-content:center;">
-                <div class="blink c-w" style="font-size:2rem;">데이터 수신중...</div>
-            </div>`;
+        mainView.innerHTML = "";
+        mainView.scrollTop = 0;
+        cmdInput.value = "";
+        currentPage = pageNo;
+        promptText.innerText = `선택(번호) >`;
 
-        updateFastext("목차", "뉴스", "날씨", "내위치");
-
-        if(page === 100) renderIndex();
-        else if(NEWS_CATS[page]) fetchNews(page);
-        else if(page === 200) fetchNationWeather();
-        else if(page === 201) fetchLocalWeather();
-        else render404();
+        // 페이지 분기
+        if(pageNo === 100) renderMainMenu();
+        else if(NEWS_CATS[pageNo]) fetchNewsList(pageNo);
+        // 30: 날씨 홈, 31: 내 위치, 32~37: 지역별
+        else if(pageNo === 30) renderWeatherMenu(); 
+        else if(pageNo === 31) fetchLocalWeather(); 
+        else if(pageNo >= 32 && pageNo <= 37) fetchRegionalWeather(pageNo);
+        else if(pageNo === 99) renderHelp();
+        else renderError("존재하지 않는 페이지입니다.");
     }
 
-    function handleFastext(color) {
-        if(color === 'red') loadPage(100);
-        if(color === 'green') loadPage(101);
-        if(color === 'yellow') loadPage(200);
-        if(color === 'cyan') loadPage(201);
+    // --- 메인 메뉴 ---
+    function renderMainMenu() {
+        const art = `
+<span class="c-c">┌──────────────────────────────────────────────────┐</span>
+<span class="c-c">│</span>  <span class="c-y">N E W S   B B S</span>                 <span class="c-g">System Ready</span>    <span class="c-c">│</span>
+<span class="c-c">│</span>                                                  <span class="c-c">│</span>
+<span class="c-c">│</span>  <span class="c-w">[ 뉴시스 Newsis ]</span>                               <span class="c-c">│</span>
+<span class="c-c">│</span>   11.속보 12.정치 13.경제 14.금융 15.산업        <span class="c-c">│</span>
+<span class="c-c">│</span>   16.사회 17.국제 18.문화 19.스포츠              <span class="c-c">│</span>
+<span class="c-c">│</span>                                                  <span class="c-c">│</span>
+<span class="c-c">│</span>  <span class="c-w">[ 연합뉴스 Yonhap ]</span> (기사본문 지원)             <span class="c-c">│</span>
+<span class="c-c">│</span>   21.전체 22.정치 23.경제 24.산업 25.사회        <span class="c-c">│</span>
+<span class="c-c">│</span>   26.전국 27.국제 28.문화 29.스포츠              <span class="c-c">│</span>
+<span class="c-c">│</span>                                                  <span class="c-c">│</span>
+<span class="c-c">│</span>  <span class="c-w">[ 날씨 Weather ]</span>                                <span class="c-c">│</span>
+<span class="c-c">│</span>   30. 날씨 홈 (지역별 상세 조회)                 <span class="c-c">│</span>
+<span class="c-c">│</span>   31. <span class="c-y">내 위치 날씨</span>                               <span class="c-c">│</span>
+<span class="c-c">│</span>                                                  <span class="c-c">│</span>
+<span class="c-c">│</span>   99. 도움말              X.  접속 종료          <span class="c-c">│</span>
+<span class="c-c">└──────────────────────────────────────────────────┘</span>
+
+<span class="c-w"> * 번호를 입력하거나 화면을 터치하세요.</span>
+`;
+        mainView.innerHTML = art;
     }
 
-    // --- P100: 메인 ---
-    function renderIndex() {
-        let html = `
-    <div style="margin-bottom: 10px;">
-        <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #fff; margin-bottom: 10px; padding-bottom: 5px;">
-            <span class="c-w double-height" style="margin-bottom:0;">MAIN INDEX</span>
-            <span class="c-y" style="font-size: 1.5rem;">P100</span>
-        </div>
-        <div class="ascii-logo">${NEWSIS_LOGO}</div>
-
-        <div class="index-grid">
-            <div>
-                <div class="c-y bg-t" style="margin-bottom: 5px; font-size: 1.1rem;">뉴스 서비스 (101-104)</div>
-                <div class="tele-item" onclick="loadPage(101)"><span class="ti-id">101</span><span class="ti-text">주요 뉴스 (속보)</span></div>
-                <div class="tele-item" onclick="loadPage(102)"><span class="ti-id">102</span><span class="ti-text">정치 뉴스</span></div>
-                <div class="tele-item" onclick="loadPage(103)"><span class="ti-id">103</span><span class="ti-text">경제 뉴스</span></div>
-                <div class="tele-item" onclick="loadPage(104)"><span class="ti-id">104</span><span class="ti-text">사회 뉴스</span></div>
-            </div>
-            <div>
-                <div class="c-c bg-t" style="margin-bottom: 5px; font-size: 1.1rem;">추가 정보 (105-109)</div>
-                <div class="tele-item" onclick="loadPage(105)"><span class="ti-id">105</span><span class="ti-text">국제 뉴스</span></div>
-                <div class="tele-item" onclick="loadPage(106)"><span class="ti-id">106</span><span class="ti-text">문화/예술</span></div>
-                <div class="tele-item" onclick="loadPage(107)"><span class="ti-id">107</span><span class="ti-text">스포츠</span></div>
-                <div class="tele-item" onclick="loadPage(108)"><span class="ti-id">108</span><span class="ti-text">연예/방송</span></div>
-                <div class="tele-item" onclick="loadPage(109)"><span class="ti-id">109</span><span class="ti-text">태블릿/IT</span></div>
-            </div>
-        </div>
-
-        <div style="margin-top: 10px;">
-            <div class="c-g bg-t" style="margin-bottom: 5px; font-size: 1.1rem;">날씨 서비스</div>
-            <div class="index-grid">
-                 <div class="tele-item" onclick="loadPage(200)"><span class="ti-id">200</span><span class="ti-text">전국 날씨 (20개씩 순환)</span></div>
-                 <div class="tele-item" onclick="loadPage(201)"><span class="ti-id">201</span><span class="ti-text">내 위치 날씨</span></div>
-            </div>
-        </div>
-        
-        <div style="text-align:center; margin-top: 20px; padding-bottom: 20px;" class="blink c-g">
-            페이지 번호 입력
-        </div>
-    </div>
-        `;
-        contentDiv.innerHTML = html;
-        updateFastext("목차", "뉴스", "날씨", "내위치");
-    }
-
-    // --- 공통 XML 파싱 함수 (기상청) ---
-    async function getKmaWeatherMap() {
-        const url = "https://www.kma.go.kr/XML/weather/sfc_web_map.xml";
+    // --- 뉴스 목록 ---
+    async function fetchNewsList(catId) {
+        renderLoading();
+        const cat = NEWS_CATS[catId];
         let xmlText = null;
-        
-        for (const proxy of PROXIES) {
-            try {
-                const res = await fetch(proxy + encodeURIComponent(url));
-                if (res.ok) {
-                    xmlText = await res.text();
-                    break;
-                }
-            } catch (e) {
-                console.warn(`Proxy ${proxy} failed`);
-            }
-        }
 
-        if (!xmlText) throw new Error("XML Load Failed");
-
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(xmlText, "text/xml");
-        
-        const year = xml.querySelector("weather").getAttribute("year");
-        const month = xml.querySelector("weather").getAttribute("month");
-        const day = xml.querySelector("weather").getAttribute("day");
-        const hour = xml.querySelector("weather").getAttribute("hour");
-        const timeStr = `${year}.${month}.${day} ${hour}:00`;
-
-        const locals = xml.querySelectorAll("local");
-        const kmaMap = {};
-        
-        locals.forEach(node => {
-            kmaMap[node.textContent] = {
-                temp: node.getAttribute("ta"),
-                sky: node.getAttribute("desc")
-            };
-        });
-        
-        return { map: kmaMap, time: timeStr };
-    }
-
-    // --- P101~109: 뉴스 (XML 직접 파싱) ---
-    async function fetchNews(page) {
-        const cat = NEWS_CATS[page];
-        
-        // 프록시 사용
-        let xmlText = null;
         for (const proxy of PROXIES) {
             try {
                 const res = await fetch(proxy + encodeURIComponent(cat.u));
@@ -574,188 +310,231 @@
                     xmlText = await res.text();
                     break;
                 }
-            } catch (e) {
-                console.warn(`Proxy ${proxy} failed`);
-            }
+            } catch (e) { console.warn("Proxy fail"); }
         }
 
-        if (!xmlText) {
-             contentDiv.innerHTML = '<div class="c-r bg-t" style="margin-top:20px; text-align:center;">뉴스 데이터 수신 실패</div>';
-             return;
-        }
+        if (!xmlText) { renderError("데이터 수신 실패.\n잠시 후 다시 시도하세요."); return; }
 
         try {
             const parser = new DOMParser();
             const xml = parser.parseFromString(xmlText, "text/xml");
             const items = xml.querySelectorAll("item");
             
-            currentNewsItems = [];
+            window.currentNewsItems = [];
             items.forEach(node => {
-                currentNewsItems.push({
+                window.currentNewsItems.push({
                     title: node.querySelector("title")?.textContent || "",
-                    description: node.querySelector("description")?.textContent || "",
-                    pubDate: node.querySelector("pubDate")?.textContent || "",
+                    desc: node.querySelector("description")?.textContent || "",
+                    date: node.querySelector("pubDate")?.textContent || "",
+                    link: node.querySelector("link")?.textContent || "",
+                    isYonhap: (catId >= 20 && catId < 30) // 20번대 연합뉴스
                 });
             });
 
-            const firstTime = currentNewsItems.length > 0 ? toKSTTime(currentNewsItems[0].pubDate) : "00:00";
-
-            let html = `
-    <div style="background:#000; color:white; margin-bottom:10px; padding: 5px;">
-        <span class="double-height c-y">NEWSIS ${cat.t}</span>
-        <span style="float:right">${firstTime}</span>
-    </div>
-    <div class="ascii-logo" style="margin-bottom: 5px;">${NEWSIS_LOGO}</div>
-            `;
-
-            // 50개까지 표시
-            currentNewsItems.slice(0, 50).forEach((item, idx) => {
-                html += `
-    <div class="tele-item" onclick="showDetail(${idx})">
-        <span class="ti-id">${idx+1}</span>
-        <span class="ti-text">${item.title}</span>
-    </div>`;
-            });
-
-            contentDiv.innerHTML = html;
-            updateFastext("목차", "다음분야", "날씨", "내위치");
+            let output = `<span class="c-y">■ ${cat.t} ■</span>\n\n`;
             
-            // fastextBar[1]: 다음 분야로 이동 (순환 로직 수정: 109까지)
-            fastextBar[1].onclick = () => {
-                let next = page + 1;
-                if(next > 109) next = 101;
-                loadPage(next);
-            };
+            window.currentNewsItems.slice(0, 15).forEach((item, idx) => {
+                let title = item.title;
+                title = title.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+                if(title.length > 22) title = title.substring(0, 21) + "..";
+                
+                let timeStr = "";
+                try {
+                    const d = new Date(item.date);
+                    const now = new Date();
+                    if(d.toDateString() === now.toDateString()) {
+                        timeStr = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+                    } else {
+                        timeStr = (d.getMonth()+1) + "/" + d.getDate();
+                    }
+                } catch(e){}
 
-        } catch(e) {
-            console.error(e);
-            contentDiv.innerHTML = '<div class="c-r bg-t">뉴스 파싱 오류</div>';
-        }
-    }
-
-    function showDetail(idx) {
-        const item = currentNewsItems[idx];
-        if(!item) return;
-        
-        let desc = item.description.replace(/<[^>]*>/g, " ");
-        
-        let html = `
-    <div class="c-y bg-t" style="margin-bottom:10px;">${NEWS_CATS[currentPage].t} - 상세내용</div>
-    <div class="c-c double-height" style="margin-bottom:10px;">${item.title}</div>
-    <div style="border-top: 1px dashed white; margin: 10px 0;"></div>
-    <div class="c-w" style="margin-bottom:20px; line-height:1.6; font-size: 1.4rem;">${desc}</div>
-    <div class="c-g">작성일: ${toKSTTime(item.pubDate)}</div>
-        `;
-        contentDiv.innerHTML = html;
-        fastextBar[0].innerText = "100 목록";
-        fastextBar[0].onclick = () => loadPage(currentPage);
-    }
-
-    // --- P200: 전국 날씨 (KMA XML) ---
-    async function fetchNationWeather() {
-        try {
-            const { map, time } = await getKmaWeatherMap();
-
-            weatherData = [];
-            CITIES.forEach(city => {
-                const data = map[city.n]; // map의 키는 도시 이름(string)
-                if (data) {
-                    weatherData.push({ name: city.n, temp: data.temp, sky: data.sky });
-                } else {
-                    weatherData.push({ name: city.n, temp: "--", sky: "정보없음" });
-                }
+                const num = (idx + 1).toString().padStart(2, '0');
+                output += `<div class="t-link" onclick="showNewsDetail(${idx})"><span class="c-g">${num}</span> ${title} <span class="c-c" style="float:right">${timeStr}</span></div>`;
             });
 
-            weatherPageIndex = 0;
-            renderWeatherPage(time);
-
-            if (weatherTimer) clearInterval(weatherTimer);
-            weatherTimer = setInterval(() => {
-                weatherPageIndex++;
-                if (weatherPageIndex >= 4) weatherPageIndex = 0;
-                renderWeatherPage(time);
-            }, WEATHER_INTERVAL);
-
+            output += `\n<span class="c-w">[M:메뉴] [번호:읽기]</span>`;
+            mainView.innerHTML = output;
+            promptText.innerText = "선택(기사번호) >";
         } catch(e) {
-            console.error(e);
-            contentDiv.innerHTML = '<div class="c-r bg-t">기상청 데이터 수신 실패</div>';
+            renderError("RSS 파싱 오류");
         }
     }
 
-    function renderWeatherPage(time) {
-        const itemsPerPage = 20; 
-        const start = weatherPageIndex * itemsPerPage;
-        const end = start + itemsPerPage;
-        const pageItems = weatherData.slice(start, end);
+    // --- 뉴스 상세 ---
+    window.showNewsDetail = async function(idx) {
+        const item = window.currentNewsItems[idx];
+        if(!item) return;
 
-        let regionTitle = "전국 날씨";
-        if (weatherPageIndex === 0) regionTitle = "서울/경기/강원서부";
-        else if (weatherPageIndex === 1) regionTitle = "충청/강원동부/경북북부";
-        else if (weatherPageIndex === 2) regionTitle = "호남/제주";
-        else if (weatherPageIndex === 3) regionTitle = "영남 (경북/경남/부산)";
-
-        let html = `
-    <div style="display:flex; justify-content:space-between; margin-bottom: 10px;">
-        <span class="c-y bg-t">${regionTitle} (${weatherPageIndex + 1}/4)</span>
-        <span class="c-g">${time} 기준</span>
-    </div>
-    <div class="weather-container">
-        <div class="weather-grid slide-animate">
+        let cleanDesc = item.desc.replace(/<[^>]*>/g, "").trim();
+        
+        let header = `
+<span class="c-c">┌──────────────────────────────────────────────────┐</span>
+<span class="c-y"> ${item.title}</span>
+<span class="c-c">└──────────────────────────────────────────────────┘</span>
+<span class="c-g">작성일: ${item.date}</span>
 `;
         
-        for(let i=0; i<itemsPerPage; i++) {
-            const item = pageItems[i];
-            if (item) {
-                let sky = item.sky.replace("구름많음","구름").replace("구름조금","구름").substring(0,3); 
-                html += `
-            <div class="w-cell">
-                <span class="w-loc">${item.name}</span>
-                ${getWeatherIcon(item.sky)}
-                <span class="w-temp">${item.temp}°</span>
-            </div>`;
-            } else {
-                html += `<div class="w-cell"></div>`;
-            }
+        let loadingMsg = "";
+        if(item.isYonhap) {
+            loadingMsg = `\n<span class="c-c blink">>> 본문 전체를 불러오는 중입니다...</span>\n`;
         }
+
+        let body = `\n${cleanDesc}\n`;
+        let footer = `\n<span class="c-w">====================================================</span>
+<span class="c-c">[Enter:목록] [M:메뉴]</span>`;
+
+        mainView.innerHTML = header + loadingMsg + body + footer;
+        currentPage = 'READING';
+        promptText.innerText = "명령(Enter) >";
+
+        if(item.isYonhap) {
+            try {
+                let fullText = "";
+                let fetched = false;
+
+                for (const proxy of PROXIES) {
+                    try {
+                        const res = await fetch(proxy + encodeURIComponent(item.link));
+                        if(res.ok) {
+                            const html = await res.text();
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, "text/html");
+                            
+                            // 연합뉴스 본문 셀렉터
+                            const article = doc.querySelector('.story-news') || doc.querySelector('#articleWrap') || doc.querySelector('.article-story');
+                            if(article) { fullText = article.innerText; fetched = true; }
+                            
+                            if(fetched) break;
+                        }
+                    } catch(e) {}
+                }
+
+                if(fetched && fullText.length > 50) {
+                    fullText = fullText.replace(/\n\s*\n/g, '\n\n');
+                    mainView.innerHTML = header + `\n<span class="c-y">[전문]</span>\n` + fullText + footer;
+                } else {
+                    mainView.innerHTML = header + `\n<span class="c-r">(본문 수신 불가 - 요약본 표시)</span>\n` + body + footer;
+                }
+            } catch(e) { }
+        }
+    }
+
+    // --- 기상청 데이터 파싱 공통 함수 ---
+    async function getKmaData() {
+        const url = "https://www.kma.go.kr/XML/weather/sfc_web_map.xml";
+        let xmlText = null;
+        for (const proxy of PROXIES) {
+            try {
+                const res = await fetch(proxy + encodeURIComponent(url));
+                if (res.ok) { xmlText = await res.text(); break; }
+            } catch (e) {}
+        }
+        if(!xmlText) throw new Error("Weather Load Failed");
         
-        html += `</div></div>`;
-        contentDiv.innerHTML = html;
-        updateFastext("목차", "뉴스", "다음지역", "내위치");
-        
-        fastextBar[2].onclick = () => {
-             weatherPageIndex++;
-             if (weatherPageIndex >= 4) weatherPageIndex = 0;
-             renderWeatherPage(time);
-             clearInterval(weatherTimer);
-             weatherTimer = setInterval(() => {
-                weatherPageIndex++;
-                if (weatherPageIndex >= 4) weatherPageIndex = 0;
-                renderWeatherPage(time);
-             }, WEATHER_INTERVAL);
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(xmlText, "text/xml");
+        return {
+            year: xml.querySelector("weather").getAttribute("year"),
+            month: xml.querySelector("weather").getAttribute("month"),
+            day: xml.querySelector("weather").getAttribute("day"),
+            hour: xml.querySelector("weather").getAttribute("hour"),
+            locals: xml.querySelectorAll("local")
         };
     }
 
-    // --- P201: 내 위치 ---
+    // --- 날씨 메인 (30번) ---
+    function renderWeatherMenu() {
+        const art = `
+<span class="c-y">■ 날씨 정보 서비스 ■</span>
+
+ 31. <span class="c-g">내 위치 날씨 확인 (GPS)</span>
+
+ [지역별 상세 날씨 (시/군/구)]
+ --------------------------------------
+ <span class="t-link" onclick="loadPage(32)">32. 서울 / 경기 / 인천</span>
+ <span class="t-link" onclick="loadPage(33)">33. 강원도 (영서/영동)</span>
+ <span class="t-link" onclick="loadPage(34)">34. 충청 / 대전 / 세종</span>
+ <span class="t-link" onclick="loadPage(35)">35. 전라 / 광주</span>
+ <span class="t-link" onclick="loadPage(36)">36. 경상 / 대구 / 부산 / 울산</span>
+ <span class="t-link" onclick="loadPage(37)">37. 제주도</span>
+ --------------------------------------
+
+<span class="c-w">[M] 메인 메뉴로 돌아가기</span>
+`;
+        mainView.innerHTML = art;
+        promptText.innerText = "선택(번호) >";
+    }
+
+    // --- 지역별 상세 날씨 (32~37번) ---
+    async function fetchRegionalWeather(pageNo) {
+        renderLoading();
+        try {
+            const data = await getKmaData();
+            const items = data.locals;
+            const regionInfo = REGION_CITIES[pageNo];
+            
+            if(!regionInfo) { renderError("지역 정보 오류"); return; }
+
+            let output = `<span class="c-y">■ ${regionInfo.name} 지역 날씨 ■</span>\n`;
+            output += `<span class="c-g">발표: ${data.year}.${data.month}.${data.day} ${data.hour}시</span>\n\n`;
+            
+            // 2열 그리드
+            output += `<div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">`;
+            
+            regionInfo.cities.forEach(city => {
+                let info = { temp: "--", desc: "정보없음" };
+                for(let i=0; i<items.length; i++) {
+                    if(items[i].textContent === city) {
+                        info.temp = items[i].getAttribute("ta");
+                        info.desc = items[i].getAttribute("desc");
+                        break;
+                    }
+                }
+                output += `<div><span class="c-c">${city}</span> <span class="c-w">${info.desc}</span> <span class="c-r">${info.temp}℃</span></div>`;
+            });
+            output += `</div>`;
+            
+            output += `\n<span class="c-g">[30:날씨홈] [M:메인]</span>`;
+            
+            mainView.innerHTML = output;
+            promptText.innerText = "명령(30/M) >";
+        } catch(e) {
+            renderError("날씨 정보 수신 실패");
+        }
+    }
+
+    // --- 내 위치 날씨 (31) ---
     function fetchLocalWeather() {
         if(!navigator.geolocation) {
-            contentDiv.innerHTML = '<div class="c-r bg-t">GPS를 지원하지 않는 브라우저입니다.</div>';
+            renderError("브라우저가 위치 정보를 지원하지 않습니다.");
             return;
         }
-        contentDiv.innerHTML = '<div class="blink c-c" style="margin-top:20px; font-size:1.5rem; text-align:center;">위치 확인중...</div>';
+        
+        mainView.innerHTML = `<span class="c-c blink">위성 신호 수신중... (GPS)</span>`;
         
         navigator.geolocation.getCurrentPosition(async (pos) => {
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
             
             try {
-                const { map, time } = await getKmaWeatherMap();
+                const data = await getKmaData();
+                const items = data.locals;
                 
-                // 가장 가까운 도시 찾기 (CITIES 배열 활용)
+                // 좌표가 있는 기존 CITIES 배열 활용 (검색용)
+                const COORD_CITIES = [
+                    {n:"서울",la:37.57,lo:126.97}, {n:"인천",la:37.48,lo:126.62}, {n:"수원",la:37.26,lo:126.98},
+                    {n:"춘천",la:37.90,lo:127.74}, {n:"강릉",la:37.75,lo:128.89}, {n:"대전",la:36.37,lo:127.37},
+                    {n:"청주",la:36.64,lo:127.44}, {n:"대구",la:35.88,lo:128.62}, {n:"부산",la:35.10,lo:129.03},
+                    {n:"울산",la:35.56,lo:129.31}, {n:"광주",la:35.17,lo:126.85}, {n:"전주",la:35.84,lo:127.13},
+                    {n:"제주",la:33.51,lo:126.52}, {n:"서귀포",la:33.25,lo:126.56}, {n:"목포",la:34.81,lo:126.39},
+                    {n:"여수",la:34.76,lo:127.66}, {n:"안동",la:36.56,lo:128.72}, {n:"포항",la:36.01,lo:129.37}
+                ];
+
                 let nearest = null;
                 let minDist = Infinity;
                 
-                CITIES.forEach(city => {
-                    // 유클리드 거리 근사치 계산 (정밀한 Haversine이 아니어도 가까운 도시 찾기엔 충분)
+                COORD_CITIES.forEach(city => {
                     const dist = Math.pow(city.la - lat, 2) + Math.pow(city.lo - lon, 2);
                     if(dist < minDist) {
                         minDist = dist;
@@ -763,67 +542,117 @@
                     }
                 });
                 
-                if(!nearest) throw new Error("Nearest city not found");
-                
-                // 해당 도시의 날씨 데이터 조회
-                const data = map[nearest.n] || { temp: "--", sky: "정보없음" };
-                
-                let html = `
-    <div style="text-align:center; margin-top: 30px;">
-        <span class="c-m bg-t double-height">내 위치 (근접 관측소)</span>
-    </div>
+                let weatherInfo = { temp: "--", desc: "정보없음" };
+                if(nearest) {
+                    for(let i=0; i<items.length; i++) {
+                        if(items[i].textContent === nearest.n) {
+                            weatherInfo.temp = items[i].getAttribute("ta");
+                            weatherInfo.desc = items[i].getAttribute("desc");
+                            break;
+                        }
+                    }
+                }
 
-    <div style="border: 4px solid white; padding:30px; text-align:center; margin-top: 20px; width: 80%; max-width:400px; margin-left:auto; margin-right:auto;">
-        <div class="c-g">관측소: ${nearest.n}</div>
-        <div style="font-size:0.8rem; color:#aaa; margin-bottom:10px;">(위도 ${lat.toFixed(2)} / 경도 ${lon.toFixed(2)})</div>
-        <br>
-        <div style="display:flex; justify-content:center; margin-bottom:10px;">
-            <div style="transform:scale(2.5);">${getWeatherIcon(data.sky)}</div>
-        </div>
-        <div class="c-w" style="font-size:4rem; font-weight:bold; margin-top:10px; text-shadow: 4px 4px #000;">${data.temp}°C</div>
-        <div class="c-y" style="font-size:1.5rem; margin-top:10px;">${data.sky}</div>
-        <br>
-        <div class="c-c" style="font-size:1.0rem;">기준: ${time}</div>
-    </div>
-                `;
-                contentDiv.innerHTML = html;
-                updateFastext("목차", "뉴스", "전국날씨", "새로고침");
-                fastextBar[3].onclick = () => loadPage(201);
+                let output = `
+<span class="c-y">■ 내 위치 날씨 정보 ■</span>
 
+<span class="c-w">현재 위치(GPS)</span>: 위도 ${lat.toFixed(2)}, 경도 ${lon.toFixed(2)}
+<span class="c-w">인접 관측소</span>  : <span class="c-c">${nearest ? nearest.n : '알수없음'}</span>
+
+<span class="c-c">┌──────────────────────────┐</span>
+   기  온 : <span class="c-r" style="font-size:1.5em">${weatherInfo.temp}℃</span>
+   상  태 : <span class="c-w" style="font-size:1.2em">${weatherInfo.desc}</span>
+<span class="c-c">└──────────────────────────┘</span>
+
+<span class="c-g">발표: ${data.year}.${data.month}.${data.day} ${data.hour}:00</span>
+<span class="c-w">[R:새로고침] [30:날씨홈] [M:메인]</span>
+`;
+                mainView.innerHTML = output;
+                promptText.innerText = "명령(M) >";
+                
             } catch(e) {
-                console.error(e);
-                contentDiv.innerHTML = '<div class="c-r bg-t" style="margin-top:20px; text-align:center;">날씨 데이터 오류</div>';
+                renderError("날씨 데이터 처리 실패");
             }
-        }, () => {
-            contentDiv.innerHTML = '<div class="c-r bg-t" style="margin-top:20px; text-align:center;">GPS 권한이 필요합니다.</div>';
+        }, (err) => {
+            renderError("GPS 위치 권한을 승인해주세요.");
         });
     }
 
-    function render404() {
-        contentDiv.innerHTML = `
-    <div style="text-align:center; margin-top:50px;">
-        <span class="double-height c-r bg-t" style="font-size:3rem;">404</span><br><br>
-        <span class="c-w">페이지를 찾을 수 없습니다.</span>
-    </div>`;
+    // --- 유틸리티 ---
+    function renderLoading() {
+        mainView.innerHTML = `<span class="c-c blink">데이터를 불러오는 중입니다...</span>`;
     }
 
-    function updateFastext(r, g, y, c) {
-        fastextBar[0].innerText = "100 " + r;
-        fastextBar[1].innerText = "101 " + g;
-        fastextBar[2].innerText = "200 " + y;
-        fastextBar[3].innerText = "201 " + c;
-        
-        fastextBar[0].onclick = () => handleFastext('red');
-        fastextBar[1].onclick = () => handleFastext('green');
-        fastextBar[2].onclick = () => handleFastext('yellow');
-        fastextBar[3].onclick = () => handleFastext('cyan');
+    function renderError(msg) {
+        mainView.innerHTML = `<span class="c-r">!!! ERROR !!!</span>\n\n${msg}\n\n<span class="c-w">[M] 키를 눌러 메뉴로 복귀하세요.</span>`;
+        currentPage = 'ERROR';
     }
 
-    document.addEventListener('keydown', (e) => {
-        if(e.key >= '0' && e.key <= '9') inputDigit(e.key);
+    function renderHelp() {
+        mainView.innerHTML = `
+<span class="c-y">■ 도움말 ■</span>
+
+1. 원하는 메뉴의 번호를 입력 후 Enter를 누르세요.
+2. 모바일에서는 화면의 항목을 터치해도 됩니다.
+3. [31]번 내 위치 날씨는 GPS 권한이 필요합니다.
+4. 연합뉴스(20번대), 날씨(30번대)를 제공합니다.
+
+<span class="c-g">[M] 메인 메뉴로 돌아가기</span>
+`;
+    }
+
+    // --- 입력 처리 ---
+    cmdInput.addEventListener('keydown', function(e) {
+        if(e.key === 'Enter') {
+            const cmd = this.value.trim().toUpperCase();
+            this.value = "";
+            processCommand(cmd);
+        }
     });
 
-    loadPage(100);
+    // 화면 아무데나 누르면 입력창 포커스 (모바일 키보드 활성화)
+    document.body.addEventListener('click', (e) => {
+        // 링크 클릭이 아닐 때만 포커스
+        if(!e.target.closest('.t-link')) {
+            cmdInput.focus();
+        }
+    });
+
+    function processCommand(cmd) {
+        if(cmd === 'M' || cmd === 'MENU' || cmd === '100') {
+            loadPage(100);
+            return;
+        }
+        if(cmd === 'X' || cmd === 'Q') {
+            alert("접속을 종료합니다.");
+            window.close();
+            return;
+        }
+        if(cmd === 'R' && currentPage === 31) {
+            fetchLocalWeather();
+            return;
+        }
+
+        if(currentPage === 'READING') {
+            loadPage(100); 
+            return;
+        }
+        
+        // 숫자 입력 처리
+        const num = parseInt(cmd);
+        if(!isNaN(num)) {
+            // 기사 목록 화면에서 1~45번 입력 시 상세보기
+            if((currentPage >= 10 && currentPage <= 29) && (num >= 1 && num <= 45)) {
+                showNewsDetail(num - 1);
+            } else {
+                // 그 외에는 페이지 이동
+                loadPage(num);
+            }
+        }
+    }
+
+    // 시작
+    init();
 
 </script>
 </body>
